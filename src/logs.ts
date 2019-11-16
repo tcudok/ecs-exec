@@ -1,20 +1,22 @@
 import { Readable } from 'stream';
 import * as AWS from 'aws-sdk';
 
-type LogStreamOptions = {
+export type CreateLogEventReadStreamOptions = {
   logGroupName: string;
   logStreamName: string;
   region?: string;
   pollingInterval?: number;
 };
 
-export function createLogEventReadableStream({
+export type LogEventReadStream = Readable & { close: () => void };
+
+export function createLogEventReadStream({
   logGroupName,
   logStreamName,
   region,
   pollingInterval = 1000,
-}: LogStreamOptions): Readable {
-  const readable = new Readable({ objectMode: true });
+}: CreateLogEventReadStreamOptions): LogEventReadStream {
+  const readable = new Readable({ objectMode: true }) as LogEventReadStream;
   const cwLogs = new AWS.CloudWatchLogs({ region });
   let isReading = false;
   let timeout: NodeJS.Timeout | undefined;
@@ -29,7 +31,7 @@ export function createLogEventReadableStream({
     readLogs();
   };
 
-  readable._destroy = () => {
+  readable.close = () => {
     readable.push(null);
     isReading = false;
 

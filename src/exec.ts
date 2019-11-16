@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk';
 import debug from './debug';
-import { createLogEventReadableStream } from './logs';
+import { createLogEventReadStream } from './logs';
 
 export type EcsExecOptions = {
   cluster?: string;
@@ -14,7 +14,7 @@ export type EcsExecOptions = {
 export type EcsExecResult = {
   taskId: string;
   taskUrl: string;
-  createLogReadStream: () => AsyncGenerator<LogMessage, void, unknown>;
+  createLogReadStream: () => AsyncIterable<LogMessage>;
 };
 
 export type LogMessage = {
@@ -93,7 +93,7 @@ export async function ecsExec({
         })
         .promise();
 
-      const logStream = createLogEventReadableStream({
+      const logStream = createLogEventReadStream({
         region,
         logGroupName: taskName,
         logStreamName: `${taskName}/${taskName}/${taskId}`,
@@ -105,7 +105,7 @@ export async function ecsExec({
         })
         .promise()
         .then(() => {
-          logStream.destroy();
+          logStream.close();
         });
 
       for await (const event of logStream) {
