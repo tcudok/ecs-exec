@@ -6,9 +6,15 @@ export type EcsExecOptions = {
   cluster?: string;
   taskName: string;
   args?: string[];
+  launchType: 'FARGATE' | 'EC2';
   region: string;
   subnetId: string;
   securityGroupId: string;
+  assignPublicIp?: boolean;
+  logs?: {
+    logGroupName: string;
+    logStreamPrefix: string;
+  };
 };
 
 export type EcsExecResult = {
@@ -23,22 +29,25 @@ export type LogMessage = {
 };
 
 export async function ecsExec({
-  cluster,
+  cluster = 'default',
   taskName,
   args,
+  launchType,
   region,
   subnetId,
   securityGroupId,
+  assignPublicIp,
+  logs,
 }: EcsExecOptions): Promise<EcsExecResult> {
   const ecs = new AWS.ECS({ region });
 
   const params: AWS.ECS.RunTaskRequest = {
     cluster: cluster,
     taskDefinition: taskName,
-    launchType: 'FARGATE',
+    launchType: launchType,
     networkConfiguration: {
       awsvpcConfiguration: {
-        assignPublicIp: 'ENABLED',
+        assignPublicIp: assignPublicIp ? 'ENABLED' : 'DISABLED',
         subnets: [subnetId],
         securityGroups: [securityGroupId],
       },
@@ -87,6 +96,10 @@ export async function ecsExec({
     taskId,
     taskUrl: `https://${region}.console.aws.amazon.com/ecs/home?region=${region}#/clusters/${cluster}/tasks/${taskId}/details`,
     createLogReadStream: async function*() {
+      if (!logs) {
+        return;
+      }
+
       await ecs
         .waitFor('tasksRunning', {
           tasks: [taskId],
@@ -95,8 +108,8 @@ export async function ecsExec({
 
       const logStream = createLogEventReadStream({
         region,
-        logGroupName: taskName,
-        logStreamName: `${taskName}/${taskName}/${taskId}`,
+        logGroupName: logs.logGroupName,
+        logStreamName: `${logs.logStreamPrefix}/${taskName}/${taskId}`,
       });
 
       ecs

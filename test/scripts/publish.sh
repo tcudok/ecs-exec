@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-DOCKER_IMAGE_TAG=1
+DOCKER_IMAGE_TAG=2
 
 cd terraform
 terraform init

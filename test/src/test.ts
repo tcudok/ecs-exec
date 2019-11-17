@@ -22,9 +22,15 @@ const random = new Randoma({ seed: 1 });
       ecsExec({
         taskName,
         args: [],
+        launchType: 'FARGATE',
         region,
         subnetId,
         securityGroupId,
+        assignPublicIp: true,
+        logs: {
+          logGroupName: taskName,
+          logStreamPrefix: taskName,
+        },
       }),
     ),
   );
@@ -59,7 +65,7 @@ async function* createLogReadStream(
   yield {
     ...taskInfo,
     timestamp: Date.now(),
-    message: `Starting... Open ${task.taskUrl} for full details.`,
+    message: `Starting ECS task... Open ${task.taskUrl} for full details.`,
   };
 
   for await (const event of task.createLogReadStream()) {

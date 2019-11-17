@@ -2,6 +2,7 @@
   "name": "@tcudok/ecs-exec",
   "version": "1.0.0",
   "license": "Unlicense",
+  "repository": "github:tcudok/ecs-exec",
   "main": "dist/exec",
   "files": [
     "dist/**/*"
