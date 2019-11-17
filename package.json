@@ -5,6 +5,9 @@
   "repository": "github:tcudok/ecs-exec",
   "main": "dist/exec",
   "types": "dist/exec.d.ts",
+  "engines": {
+    "node": ">=12"
+  },
   "files": [
     "dist/**/*"
   ],
