@@ -1,7 +1,7 @@
 {
   "name": "@tcudok/ecs-exec",
   "version": "1.0.0",
-  "license": "MIT",
+  "license": "Unlicense",
   "main": "dist/exec",
   "files": [
     "dist/**/*"
