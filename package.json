@@ -1,9 +1,10 @@
 {
   "name": "@tcudok/ecs-exec",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Unlicense",
   "repository": "github:tcudok/ecs-exec",
   "main": "dist/exec",
+  "types": "dist/exec.d.ts",
   "files": [
     "dist/**/*"
   ],
