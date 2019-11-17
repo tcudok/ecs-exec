@@ -1,4 +1,4 @@
-# ecs-exec
+# @tcudok/ecs-exec
 
 ## Installation
 
