@@ -102,6 +102,7 @@ export async function ecsExec({
 
       await ecs
         .waitFor('tasksRunning', {
+          cluster,
           tasks: [taskId],
         })
         .promise();
@@ -114,6 +115,7 @@ export async function ecsExec({
 
       ecs
         .waitFor('tasksStopped', {
+          cluster,
           tasks: [taskId],
         })
         .promise()
